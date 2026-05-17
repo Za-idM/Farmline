@@ -90,7 +90,10 @@ Current language: ${language}`;
   }
 
   const data = await response.json();
-  return data.choices?.[0]?.message?.content || "मुझे खेद है, मैं समझ नहीं पाया।";
+  let reply = data.choices?.[0]?.message?.content || "मुझे खेद है, मैं समझ नहीं पाया।";
+  // Strip <think>...</think> reasoning blocks from the response
+  reply = reply.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+  return reply;
 }
 
 // Text to Speech — returns base64 audio
@@ -120,7 +123,7 @@ export async function textToSpeech(
     body: JSON.stringify({
       inputs: [ttsText],
       target_language_code: language,
-      speaker: "anushka",
+      speaker: "priya",
       model: "bulbul:v3",
       enable_preprocessing: true,
     }),
