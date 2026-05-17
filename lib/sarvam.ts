@@ -107,7 +107,7 @@ export async function textToSpeech(
     body: JSON.stringify({
       inputs: [text],
       target_language_code: language,
-      speaker: "meera",
+      speaker: "anushka",
       model: "bulbul:v3",
       enable_preprocessing: true,
     }),
