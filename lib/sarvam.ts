@@ -25,7 +25,7 @@ export async function transcribeAudio(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "saaras:v2",
+      model: "saaras:v3",
       language_code: language,
       audio: audioBase64,
     }),

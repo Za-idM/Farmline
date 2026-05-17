@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     // Step 1: Speech to Text
     const sttForm = new FormData();
     sttForm.append("file", audioFile, "audio.webm");
-    sttForm.append("model", "saaras:v2");
+    sttForm.append("model", "saaras:v3");
     sttForm.append("language_code", lang);
 
     const sttRes = await fetch("https://api.sarvam.ai/speech-to-text", {
