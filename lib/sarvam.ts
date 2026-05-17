@@ -56,7 +56,7 @@ export async function getFarmingAnswer(
 - Organic farming
 
 Always respond in the same language the farmer is speaking. Be simple, clear, and practical.
-If speaking Hindi, use simple Hindi. If Tamil, use simple Tamil. Keep answers concise for phone calls.
+If speaking Hindi, use simple Hindi. If Tamil, use simple Tamil. Keep answers under 3 sentences — short enough to speak aloud in under 30 seconds.
 Current language: ${language}`;
 
   const messages = [
@@ -78,7 +78,7 @@ Current language: ${language}`;
     body: JSON.stringify({
       model: "sarvam-m",
       messages,
-      max_tokens: 300,
+      max_tokens: 150,
       temperature: 0.7,
     }),
   });
@@ -98,6 +98,19 @@ export async function textToSpeech(
   text: string,
   language: SarvamLanguage = "hi-IN"
 ): Promise<string> {
+  // Sarvam TTS has a 500 char limit per input — truncate at sentence boundary
+  let ttsText = text;
+  if (ttsText.length > 490) {
+    // Try to cut at last sentence ending before 490 chars
+    const cutoff = ttsText.substring(0, 490);
+    const lastPunct = Math.max(
+      cutoff.lastIndexOf("।"),
+      cutoff.lastIndexOf("."),
+      cutoff.lastIndexOf("?"),
+      cutoff.lastIndexOf("!")
+    );
+    ttsText = lastPunct > 100 ? cutoff.substring(0, lastPunct + 1) : cutoff + "...";
+  }
   const response = await fetch(`${SARVAM_API_BASE}/text-to-speech`, {
     method: "POST",
     headers: {
@@ -105,7 +118,7 @@ export async function textToSpeech(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      inputs: [text],
+      inputs: [ttsText],
       target_language_code: language,
       speaker: "anushka",
       model: "bulbul:v3",
