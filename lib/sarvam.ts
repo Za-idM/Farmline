@@ -71,6 +71,7 @@ Current language: ${language}`;
   const response = await fetch(`${SARVAM_API_BASE}/v1/chat/completions`, {
     method: "POST",
     headers: {
+      "Authorization": `Bearer ${process.env.SARVAM_API_KEY!}`,
       "api-subscription-key": process.env.SARVAM_API_KEY!,
       "Content-Type": "application/json",
     },
@@ -84,7 +85,8 @@ Current language: ${language}`;
 
   if (!response.ok) {
     const err = await response.text();
-    throw new Error(`Sarvam LLM error: ${err}`);
+    console.error("Sarvam LLM error:", response.status, err);
+    throw new Error(`Sarvam LLM error ${response.status}: ${err}`);
   }
 
   const data = await response.json();
@@ -131,6 +133,7 @@ export async function generateCallSummary(
   const response = await fetch(`${SARVAM_API_BASE}/v1/chat/completions`, {
     method: "POST",
     headers: {
+      "Authorization": `Bearer ${process.env.SARVAM_API_KEY!}`,
       "api-subscription-key": process.env.SARVAM_API_KEY!,
       "Content-Type": "application/json",
     },
