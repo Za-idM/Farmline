@@ -70,19 +70,15 @@ export default function VoiceDemo() {
   async function processAudio() {
     try {
       const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-      const arrayBuffer = await blob.arrayBuffer();
-      const base64 = btoa(
-        new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), "")
-      );
+
+      const fd = new FormData();
+      fd.append("audio", blob, "audio.webm");
+      fd.append("language", language);
+      fd.append("history", JSON.stringify(history.map((m) => ({ role: m.role, content: m.content }))));
 
       const res = await fetch("/api/voice", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          audioBase64: base64,
-          language,
-          history: history.map((m) => ({ role: m.role, content: m.content })),
-        }),
+        body: fd,
       });
 
       const data = await res.json();
