@@ -25,6 +25,8 @@ interface Call {
   duration: number | null;
   summary: string | null;
   transcript: Message[];
+  channel: string;
+  leadScore: string | null;
 }
 
 interface CallTableProps {
@@ -91,7 +93,9 @@ export default function CallTable({ calls, onRefresh }: CallTableProps) {
           <thead>
             <tr className="border-b border-gray-100">
               <th className="text-left py-3 px-4 text-gray-500 font-medium">Farmer Number</th>
+              <th className="text-left py-3 px-4 text-gray-500 font-medium">Channel</th>
               <th className="text-left py-3 px-4 text-gray-500 font-medium">Language</th>
+              <th className="text-left py-3 px-4 text-gray-500 font-medium">Lead Score</th>
               <th className="text-left py-3 px-4 text-gray-500 font-medium">Status</th>
               <th className="text-left py-3 px-4 text-gray-500 font-medium">Duration</th>
               <th className="text-left py-3 px-4 text-gray-500 font-medium">Time</th>
@@ -106,8 +110,32 @@ export default function CallTable({ calls, onRefresh }: CallTableProps) {
                 className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
               >
                 <td className="py-3 px-4 font-mono text-gray-700">{call.fromNumber}</td>
+                <td className="py-3 px-4">
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 ${
+                    call.channel === "whatsapp"
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                      : "bg-blue-50 text-blue-700 border border-blue-100"
+                  }`}>
+                    {call.channel === "whatsapp" ? "💬 WhatsApp" : "📞 Voice Call"}
+                  </span>
+                </td>
                 <td className="py-3 px-4 text-gray-600">
                   {languageLabels[call.language] || call.language}
+                </td>
+                <td className="py-3 px-4">
+                  {call.leadScore ? (
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                      call.leadScore === "Hot"
+                        ? "bg-rose-50 text-rose-700 border border-rose-100"
+                        : call.leadScore === "Warm"
+                        ? "bg-amber-50 text-amber-700 border border-amber-100"
+                        : "bg-slate-50 text-slate-600 border border-slate-100"
+                    }`}>
+                      {call.leadScore}
+                    </span>
+                  ) : (
+                    <span className="text-gray-300">—</span>
+                  )}
                 </td>
                 <td className="py-3 px-4">
                   <span

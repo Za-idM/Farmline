@@ -17,6 +17,8 @@ async function main() {
       status: "completed",
       language: "hi-IN",
       duration: 187,
+      channel: "phone",
+      leadScore: "Hot",
       summary:
         "Farmer asked about treating yellow leaves on wheat crop. AI advised checking for nitrogen deficiency and recommended urea application at 30kg/acre.",
       startedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
@@ -44,6 +46,8 @@ async function main() {
       status: "completed",
       language: "ta-IN",
       duration: 143,
+      channel: "whatsapp",
+      leadScore: "Warm",
       summary:
         "Farmer inquired about PM-KISAN scheme registration. AI explained the eligibility criteria and directed them to the nearest Common Service Centre.",
       startedAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
@@ -69,6 +73,8 @@ async function main() {
       status: "completed",
       language: "hi-IN",
       duration: 95,
+      channel: "phone",
+      leadScore: "Hot",
       summary:
         "Farmer asked about controlling aphids on mustard crop. AI recommended neem oil spray solution and advised early morning application.",
       startedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
@@ -94,6 +100,8 @@ async function main() {
       status: "in-progress",
       language: "te-IN",
       duration: null,
+      channel: "whatsapp",
+      leadScore: "Warm",
       summary: null,
       startedAt: new Date(Date.now() - 5 * 60 * 1000),
       endedAt: null,

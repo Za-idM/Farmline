@@ -92,8 +92,8 @@ export default function HomePage() {
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Also on WhatsApp</h2>
               <p className="text-gray-500 mb-4">
-                Farmers can text their questions on WhatsApp and get instant AI replies —
-                in their own language, no voice needed.
+                Farmers can text their questions on WhatsApp in their own language and get instant AI replies —
+                Hindi, Tamil, Telugu, and 8 more Indian languages supported.
               </p>
               <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-5">
                 {["Hindi", "Tamil", "Telugu", "Kannada", "Bengali", "Marathi", "Gujarati"].map((l) => (

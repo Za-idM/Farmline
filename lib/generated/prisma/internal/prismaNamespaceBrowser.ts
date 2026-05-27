@@ -79,6 +79,8 @@ export const CallScalarFieldEnum = {
   endedAt: 'endedAt',
   duration: 'duration',
   summary: 'summary',
+  channel: 'channel',
+  leadScore: 'leadScore',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

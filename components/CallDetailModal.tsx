@@ -22,6 +22,8 @@ interface Call {
   duration: number | null;
   summary: string | null;
   transcript: Message[];
+  channel: string;
+  leadScore: string | null;
 }
 
 interface Props {
@@ -56,7 +58,7 @@ export default function CallDetailModal({ call, onClose }: Props) {
 
         <div className="overflow-y-auto flex-1 p-6 space-y-6">
           {/* Meta info */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Phone size={16} className="text-green-500" />
               <span>{call.fromNumber} → {call.toNumber}</span>
@@ -66,10 +68,32 @@ export default function CallDetailModal({ call, onClose }: Props) {
               <span>{formatDuration(call.duration)}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-600">
+              <span className="font-semibold text-gray-500">Channel:</span>
+              <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                call.channel === "whatsapp" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-blue-50 text-blue-700 border border-blue-100"
+              }`}>
+                {call.channel === "whatsapp" ? "💬 WhatsApp" : "📞 Voice Call"}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <span className="font-semibold text-gray-500">Lead Score:</span>
+              {call.leadScore ? (
+                <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                  call.leadScore === "Hot" ? "bg-rose-50 text-rose-700 border border-rose-100" :
+                  call.leadScore === "Warm" ? "bg-amber-50 text-amber-700 border border-amber-100" :
+                  "bg-slate-50 text-slate-600 border border-slate-100"
+                }`}>
+                  {call.leadScore}
+                </span>
+              ) : (
+                <span className="text-gray-400">—</span>
+              )}
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
               <MessageSquare size={16} className="text-purple-500" />
               <span>{call.transcript.length} messages</span>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-500 font-medium">
               {format(new Date(call.startedAt), "dd MMM yyyy, hh:mm a")}
             </div>
           </div>
@@ -84,6 +108,8 @@ export default function CallDetailModal({ call, onClose }: Props) {
               <p className="text-sm text-gray-700 leading-relaxed">{call.summary}</p>
             </div>
           )}
+
+
 
           {/* Transcript */}
           <div>

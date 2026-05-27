@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Phone, CheckCircle, Clock, Activity, Trash2 } from "lucide-react";
+import { Phone, CheckCircle, Clock, Activity, Trash2, Flame, TrendingUp, Snowflake } from "lucide-react";
 import StatsCard from "@/components/StatsCard";
 import CallTable from "@/components/CallTable";
 
@@ -11,6 +11,9 @@ interface Stats {
   inProgress: number;
   failed: number;
   avgDuration: number;
+  hot: number;
+  warm: number;
+  cold: number;
 }
 
 interface Message {
@@ -32,6 +35,8 @@ interface Call {
   duration: number | null;
   summary: string | null;
   transcript: Message[];
+  channel: string;
+  leadScore: string | null;
 }
 
 interface CallsResponse {
@@ -121,7 +126,7 @@ export default function DashboardPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatsCard
-            title="Total Calls"
+            title="Total Sessions"
             value={stats?.total ?? "—"}
             icon={<Phone size={20} className="text-blue-600" />}
             color="bg-blue-50"
@@ -145,6 +150,34 @@ export default function DashboardPage() {
             color="bg-purple-50"
             subtitle="per completed call"
           />
+        </div>
+
+        {/* Lead Classification Stats */}
+        <div className="space-y-3">
+          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Farmer Lead Classification</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <StatsCard
+              title="Hot Leads (Urgent)"
+              value={stats?.hot ?? "—"}
+              icon={<Flame size={20} className="text-rose-600" />}
+              color="bg-rose-50/50"
+              subtitle="Pests, disease, urgent threats"
+            />
+            <StatsCard
+              title="Warm Leads (Planning)"
+              value={stats?.warm ?? "—"}
+              icon={<TrendingUp size={20} className="text-amber-600" />}
+              color="bg-amber-50/50"
+              subtitle="Seeds, pricing, standard queries"
+            />
+            <StatsCard
+              title="Cold Leads (General)"
+              value={stats?.cold ?? "—"}
+              icon={<Snowflake size={20} className="text-slate-500" />}
+              color="bg-slate-50/50"
+              subtitle="Greetings, solved inquiries"
+            />
+          </div>
         </div>
 
         {/* Call Logs */}

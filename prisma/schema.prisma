@@ -18,6 +18,8 @@ model Call {
   endedAt     DateTime?
   duration    Int?
   summary     String?
+  channel     String   @default("phone")
+  leadScore   String?
   transcript  Message[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

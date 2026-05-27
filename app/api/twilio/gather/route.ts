@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getFarmingAnswer, generateCallSummary } from "@/lib/sarvam";
+import { getFarmingAnswer, generateCallSummary, scoreLead } from "@/lib/sarvam";
 import type { SarvamLanguage } from "@/lib/sarvam";
 
 export async function POST(req: NextRequest) {
@@ -68,6 +68,16 @@ export async function POST(req: NextRequest) {
         content: aiResponse,
       },
     });
+
+    try {
+      const leadScore = await scoreLead(speechResult);
+      await prisma.call.update({
+        where: { callSid },
+        data: { leadScore },
+      });
+    } catch (err) {
+      console.error("Failed to score lead for call:", err);
+    }
   }
 
   // Check if farmer wants to end the call

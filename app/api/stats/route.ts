@@ -2,7 +2,16 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
 export async function GET() {
-  const [total, completed, inProgress, failed, recentCalls] = await Promise.all([
+  const [
+    total,
+    completed,
+    inProgress,
+    failed,
+    recentCalls,
+    hot,
+    warm,
+    cold
+  ] = await Promise.all([
     prisma.call.count(),
     prisma.call.count({ where: { status: "completed" } }),
     prisma.call.count({ where: { status: "in-progress" } }),
@@ -12,6 +21,9 @@ export async function GET() {
       take: 5,
       include: { transcript: true },
     }),
+    prisma.call.count({ where: { leadScore: "Hot" } }),
+    prisma.call.count({ where: { leadScore: "Warm" } }),
+    prisma.call.count({ where: { leadScore: "Cold" } }),
   ]);
 
   // Average duration of completed calls
@@ -27,5 +39,8 @@ export async function GET() {
     failed,
     avgDuration: Math.round(durationResult._avg.duration || 0),
     recentCalls,
+    hot,
+    warm,
+    cold,
   });
 }

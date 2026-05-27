@@ -70,7 +70,10 @@ export async function POST(req: NextRequest) {
   }));
 
   // Get AI answer
-  let answer = "माफ करें, अभी सेवा उपलब्ध नहीं है। कृपया बाद में प्रयास करें।";
+  const fallbackAnswer = language === "en-IN"
+    ? "Sorry, the service is currently unavailable. Please try again later."
+    : "माफ करें, अभी सेवा उपलब्ध नहीं है। कृपया बाद में प्रयास करें।";
+  let answer = fallbackAnswer;
   try {
     answer = await getFarmingAnswer(body, history, language as any);
   } catch (err) {

@@ -45,6 +45,8 @@ export type CallMinAggregateOutputType = {
   endedAt: Date | null
   duration: number | null
   summary: string | null
+  channel: string | null
+  leadScore: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -60,6 +62,8 @@ export type CallMaxAggregateOutputType = {
   endedAt: Date | null
   duration: number | null
   summary: string | null
+  channel: string | null
+  leadScore: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -75,6 +79,8 @@ export type CallCountAggregateOutputType = {
   endedAt: number
   duration: number
   summary: number
+  channel: number
+  leadScore: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -100,6 +106,8 @@ export type CallMinAggregateInputType = {
   endedAt?: true
   duration?: true
   summary?: true
+  channel?: true
+  leadScore?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -115,6 +123,8 @@ export type CallMaxAggregateInputType = {
   endedAt?: true
   duration?: true
   summary?: true
+  channel?: true
+  leadScore?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -130,6 +140,8 @@ export type CallCountAggregateInputType = {
   endedAt?: true
   duration?: true
   summary?: true
+  channel?: true
+  leadScore?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -232,6 +244,8 @@ export type CallGroupByOutputType = {
   endedAt: Date | null
   duration: number | null
   summary: string | null
+  channel: string
+  leadScore: string | null
   createdAt: Date
   updatedAt: Date
   _count: CallCountAggregateOutputType | null
@@ -270,6 +284,8 @@ export type CallWhereInput = {
   endedAt?: Prisma.DateTimeNullableFilter<"Call"> | Date | string | null
   duration?: Prisma.IntNullableFilter<"Call"> | number | null
   summary?: Prisma.StringNullableFilter<"Call"> | string | null
+  channel?: Prisma.StringFilter<"Call"> | string
+  leadScore?: Prisma.StringNullableFilter<"Call"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Call"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Call"> | Date | string
   transcript?: Prisma.MessageListRelationFilter
@@ -286,6 +302,8 @@ export type CallOrderByWithRelationInput = {
   endedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   duration?: Prisma.SortOrderInput | Prisma.SortOrder
   summary?: Prisma.SortOrderInput | Prisma.SortOrder
+  channel?: Prisma.SortOrder
+  leadScore?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   transcript?: Prisma.MessageOrderByRelationAggregateInput
@@ -305,6 +323,8 @@ export type CallWhereUniqueInput = Prisma.AtLeast<{
   endedAt?: Prisma.DateTimeNullableFilter<"Call"> | Date | string | null
   duration?: Prisma.IntNullableFilter<"Call"> | number | null
   summary?: Prisma.StringNullableFilter<"Call"> | string | null
+  channel?: Prisma.StringFilter<"Call"> | string
+  leadScore?: Prisma.StringNullableFilter<"Call"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Call"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Call"> | Date | string
   transcript?: Prisma.MessageListRelationFilter
@@ -321,6 +341,8 @@ export type CallOrderByWithAggregationInput = {
   endedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   duration?: Prisma.SortOrderInput | Prisma.SortOrder
   summary?: Prisma.SortOrderInput | Prisma.SortOrder
+  channel?: Prisma.SortOrder
+  leadScore?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.CallCountOrderByAggregateInput
@@ -344,6 +366,8 @@ export type CallScalarWhereWithAggregatesInput = {
   endedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Call"> | Date | string | null
   duration?: Prisma.IntNullableWithAggregatesFilter<"Call"> | number | null
   summary?: Prisma.StringNullableWithAggregatesFilter<"Call"> | string | null
+  channel?: Prisma.StringWithAggregatesFilter<"Call"> | string
+  leadScore?: Prisma.StringNullableWithAggregatesFilter<"Call"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Call"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Call"> | Date | string
 }
@@ -359,6 +383,8 @@ export type CallCreateInput = {
   endedAt?: Date | string | null
   duration?: number | null
   summary?: string | null
+  channel?: string
+  leadScore?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transcript?: Prisma.MessageCreateNestedManyWithoutCallInput
@@ -375,6 +401,8 @@ export type CallUncheckedCreateInput = {
   endedAt?: Date | string | null
   duration?: number | null
   summary?: string | null
+  channel?: string
+  leadScore?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transcript?: Prisma.MessageUncheckedCreateNestedManyWithoutCallInput
@@ -391,6 +419,8 @@ export type CallUpdateInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  channel?: Prisma.StringFieldUpdateOperationsInput | string
+  leadScore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transcript?: Prisma.MessageUpdateManyWithoutCallNestedInput
@@ -407,6 +437,8 @@ export type CallUncheckedUpdateInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  channel?: Prisma.StringFieldUpdateOperationsInput | string
+  leadScore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transcript?: Prisma.MessageUncheckedUpdateManyWithoutCallNestedInput
@@ -423,6 +455,8 @@ export type CallCreateManyInput = {
   endedAt?: Date | string | null
   duration?: number | null
   summary?: string | null
+  channel?: string
+  leadScore?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -438,6 +472,8 @@ export type CallUpdateManyMutationInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  channel?: Prisma.StringFieldUpdateOperationsInput | string
+  leadScore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -453,6 +489,8 @@ export type CallUncheckedUpdateManyInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  channel?: Prisma.StringFieldUpdateOperationsInput | string
+  leadScore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -468,6 +506,8 @@ export type CallCountOrderByAggregateInput = {
   endedAt?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   summary?: Prisma.SortOrder
+  channel?: Prisma.SortOrder
+  leadScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -487,6 +527,8 @@ export type CallMaxOrderByAggregateInput = {
   endedAt?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   summary?: Prisma.SortOrder
+  channel?: Prisma.SortOrder
+  leadScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -502,6 +544,8 @@ export type CallMinOrderByAggregateInput = {
   endedAt?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   summary?: Prisma.SortOrder
+  channel?: Prisma.SortOrder
+  leadScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -564,6 +608,8 @@ export type CallCreateWithoutTranscriptInput = {
   endedAt?: Date | string | null
   duration?: number | null
   summary?: string | null
+  channel?: string
+  leadScore?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -579,6 +625,8 @@ export type CallUncheckedCreateWithoutTranscriptInput = {
   endedAt?: Date | string | null
   duration?: number | null
   summary?: string | null
+  channel?: string
+  leadScore?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -610,6 +658,8 @@ export type CallUpdateWithoutTranscriptInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  channel?: Prisma.StringFieldUpdateOperationsInput | string
+  leadScore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -625,6 +675,8 @@ export type CallUncheckedUpdateWithoutTranscriptInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  channel?: Prisma.StringFieldUpdateOperationsInput | string
+  leadScore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -671,6 +723,8 @@ export type CallSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   endedAt?: boolean
   duration?: boolean
   summary?: boolean
+  channel?: boolean
+  leadScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   transcript?: boolean | Prisma.Call$transcriptArgs<ExtArgs>
@@ -688,6 +742,8 @@ export type CallSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   endedAt?: boolean
   duration?: boolean
   summary?: boolean
+  channel?: boolean
+  leadScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["call"]>
@@ -703,6 +759,8 @@ export type CallSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   endedAt?: boolean
   duration?: boolean
   summary?: boolean
+  channel?: boolean
+  leadScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["call"]>
@@ -718,11 +776,13 @@ export type CallSelectScalar = {
   endedAt?: boolean
   duration?: boolean
   summary?: boolean
+  channel?: boolean
+  leadScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CallOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "callSid" | "fromNumber" | "toNumber" | "status" | "language" | "startedAt" | "endedAt" | "duration" | "summary" | "createdAt" | "updatedAt", ExtArgs["result"]["call"]>
+export type CallOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "callSid" | "fromNumber" | "toNumber" | "status" | "language" | "startedAt" | "endedAt" | "duration" | "summary" | "channel" | "leadScore" | "createdAt" | "updatedAt", ExtArgs["result"]["call"]>
 export type CallInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transcript?: boolean | Prisma.Call$transcriptArgs<ExtArgs>
   _count?: boolean | Prisma.CallCountOutputTypeDefaultArgs<ExtArgs>
@@ -746,6 +806,8 @@ export type $CallPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     endedAt: Date | null
     duration: number | null
     summary: string | null
+    channel: string
+    leadScore: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["call"]>
@@ -1182,6 +1244,8 @@ export interface CallFieldRefs {
   readonly endedAt: Prisma.FieldRef<"Call", 'DateTime'>
   readonly duration: Prisma.FieldRef<"Call", 'Int'>
   readonly summary: Prisma.FieldRef<"Call", 'String'>
+  readonly channel: Prisma.FieldRef<"Call", 'String'>
+  readonly leadScore: Prisma.FieldRef<"Call", 'String'>
   readonly createdAt: Prisma.FieldRef<"Call", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Call", 'DateTime'>
 }
