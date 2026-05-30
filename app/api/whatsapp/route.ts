@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFarmingAnswer } from "@/lib/sarvam";
+import { getFarmingAnswer, transcribeAudio, synthesizeSpeech } from "@/lib/sarvam";
 import { prisma } from "@/lib/db";
 import twilio from "twilio";
+import { storeAudio } from "@/lib/audio-store";
 
 // Detect language from text (simple heuristic based on Unicode ranges)
 function detectLanguage(text: string): string {
@@ -23,13 +24,49 @@ export async function POST(req: NextRequest) {
   const from = formData.get("From") as string; // e.g. whatsapp:+919876543210
   const body = formData.get("Body") as string;
   const profileName = formData.get("ProfileName") as string || "Farmer";
+  const mediaUrl = formData.get("MediaUrl0") as string || null;
+  const mediaType = formData.get("MediaContentType0") as string || null;
 
-  if (!body || !from) {
+  if (!from || (!body && !mediaUrl)) {
     return new NextResponse("OK");
   }
 
   const phoneNumber = from.replace("whatsapp:", "");
-  const language = detectLanguage(body);
+  let transcript = (body || "").trim();
+  let language = "hi-IN";
+  let isAudio = false;
+
+  if (mediaUrl && mediaType && mediaType.startsWith("audio/")) {
+    isAudio = true;
+    console.log(`Processing WhatsApp audio message from ${mediaUrl}...`);
+    try {
+      const transcriptionResult = await transcribeAudio(mediaUrl);
+      transcript = transcriptionResult.transcript;
+      language = transcriptionResult.languageCode;
+      console.log(`Transcription result: "${transcript}", detected language: ${language}`);
+    } catch (transcribeErr) {
+      console.error("Error transcribing WhatsApp voice note:", transcribeErr);
+      if (transcript) {
+        language = detectLanguage(transcript);
+      } else {
+        const twiml = new twilio.twiml.MessagingResponse();
+        twiml.message("नमस्ते! मुझे आपका ऑडियो संदेश समझने में समस्या हुई। कृपया पुनः प्रयास करें।\nHello! I had trouble understanding your audio message. Please try again.");
+        return new NextResponse(twiml.toString(), {
+          headers: { "Content-Type": "text/xml" },
+        });
+      }
+    }
+  } else {
+    language = detectLanguage(transcript);
+  }
+
+  if (!transcript) {
+    const twiml = new twilio.twiml.MessagingResponse();
+    twiml.message("नमस्ते! अपना सवाल बोलें या लिखें।\nHello! Please send a voice note or type your farming question.");
+    return new NextResponse(twiml.toString(), {
+      headers: { "Content-Type": "text/xml" },
+    });
+  }
 
   // Find or create a WhatsApp "call" session for this farmer
   let session = await prisma.call.findFirst({
@@ -59,7 +96,7 @@ export async function POST(req: NextRequest) {
     data: {
       callId: session.id,
       role: "farmer",
-      content: body,
+      content: transcript,
     },
   });
 
@@ -75,7 +112,7 @@ export async function POST(req: NextRequest) {
     : "माफ करें, अभी सेवा उपलब्ध नहीं है। कृपया बाद में प्रयास करें।";
   let answer = fallbackAnswer;
   try {
-    answer = await getFarmingAnswer(body, history, language as any);
+    answer = await getFarmingAnswer(transcript, history, language as any);
   } catch (err) {
     console.error("LLM error:", err);
   }
@@ -92,7 +129,7 @@ export async function POST(req: NextRequest) {
   // Check if conversation should end
   const endKeywords = ["धन्यवाद", "bye", "goodbye", "thank you", "thanks", "बस", "ok bye", "ठीक है"];
   const wantsToEnd = endKeywords.some((kw) =>
-    body.toLowerCase().includes(kw.toLowerCase())
+    transcript.toLowerCase().includes(kw.toLowerCase())
   );
 
   if (wantsToEnd) {
@@ -104,7 +141,26 @@ export async function POST(req: NextRequest) {
 
   // Reply via Twilio WhatsApp
   const twiml = new twilio.twiml.MessagingResponse();
-  twiml.message(answer);
+  
+  if (isAudio) {
+    try {
+      console.log(`Synthesizing response audio for language ${language}...`);
+      const audioBuffer = await synthesizeSpeech(answer, language);
+      const key = `wa_sync_${session.id}_${Date.now()}`;
+      storeAudio(key, audioBuffer);
+      
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      const audioUrl = `${appUrl}/api/audio/${key}`;
+      
+      const message = twiml.message(answer);
+      message.media(audioUrl);
+    } catch (ttsErr) {
+      console.error("TTS Synthesis failed, falling back to text reply:", ttsErr);
+      twiml.message(answer);
+    }
+  } else {
+    twiml.message(answer);
+  }
 
   return new NextResponse(twiml.toString(), {
     headers: { "Content-Type": "text/xml" },

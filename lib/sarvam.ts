@@ -267,6 +267,7 @@ export async function synthesizeSpeech(
       speaker: "priya",
       model: "bulbul:v3",
       enable_preprocessing: true,
+      output_audio_codec: "mp3",
     }),
   });
 

@@ -17,3 +17,13 @@ export async function sendWhatsAppText(to: string, body: string) {
     body,
   });
 }
+
+export async function sendWhatsAppAudio(to: string, body: string, mediaUrl: string) {
+  console.log(`Sending WhatsApp audio to ${to} from ${FROM} with mediaUrl ${mediaUrl}`);
+  await client.messages.create({
+    from: FROM,
+    to: to.startsWith("whatsapp:") ? to : `whatsapp:${to}`,
+    body,
+    mediaUrl: [mediaUrl],
+  });
+}

@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import {
   generateFarmingAnswer,
-  scoreLead
+  scoreLead,
+  transcribeAudio,
+  synthesizeSpeech
 } from "@/lib/sarvam";
-import { sendWhatsAppText } from "@/lib/twilio-whatsapp";
+import { sendWhatsAppText, sendWhatsAppAudio } from "@/lib/twilio-whatsapp";
+import { storeAudio } from "@/lib/audio-store";
 
 // Detect language from text (simple heuristic based on Unicode ranges)
 function detectLanguage(text: string): string {
@@ -24,17 +27,44 @@ function detectLanguage(text: string): string {
 async function processMessage(
   from: string,
   body: string,
-  msgSid: string
+  msgSid: string,
+  mediaUrl: string | null,
+  mediaType: string | null
 ) {
   try {
-    // 1. Language Detection from text
-    const transcript = body.trim();
-    const language = detectLanguage(transcript);
+    let transcript = body.trim();
+    let language = "hi-IN";
+    let isAudio = false;
+
+    // 1. Check if it's an audio message (voice note)
+    if (mediaUrl && mediaType && mediaType.startsWith("audio/")) {
+      isAudio = true;
+      console.log(`Processing WhatsApp audio message from ${mediaUrl}...`);
+      try {
+        const transcriptionResult = await transcribeAudio(mediaUrl);
+        transcript = transcriptionResult.transcript;
+        language = transcriptionResult.languageCode;
+        console.log(`Transcription result: "${transcript}", detected language: ${language}`);
+      } catch (transcribeErr) {
+        console.error("Error transcribing WhatsApp voice note:", transcribeErr);
+        if (transcript) {
+          language = detectLanguage(transcript);
+        } else {
+          await sendWhatsAppText(
+            from,
+            "नमस्ते! मुझे आपका ऑडियो संदेश समझने में समस्या हुई। कृपया पुनः प्रयास करें।\nHello! I had trouble understanding your audio message. Please try again."
+          );
+          return;
+        }
+      }
+    } else {
+      language = detectLanguage(transcript);
+    }
 
     if (!transcript) {
       await sendWhatsAppText(
         from,
-        "नमस्ते! अपना सवाल लिखें।\nHello! Please type your farming question."
+        "नमस्ते! अपना सवाल बोलें या लिखें।\nHello! Please send a voice note or type your farming question."
       );
       return;
     }
@@ -79,8 +109,26 @@ async function processMessage(
       },
     });
 
-    // 4. Reply — send text immediately
-    await sendWhatsAppText(from, answer);
+    // 4. Reply
+    if (isAudio) {
+      try {
+        console.log(`Synthesizing response audio for language ${language}...`);
+        const audioBuffer = await synthesizeSpeech(answer, language);
+        
+        const key = `wa_${msgSid}`;
+        storeAudio(key, audioBuffer);
+        
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+        const audioUrl = `${appUrl}/api/audio/${key}`;
+        
+        await sendWhatsAppAudio(from, answer, audioUrl);
+      } catch (ttsErr) {
+        console.error("TTS Synthesis or WhatsApp Audio Send failed, falling back to text:", ttsErr);
+        await sendWhatsAppText(from, answer);
+      }
+    } else {
+      await sendWhatsAppText(from, answer);
+    }
 
     // 5. Update record
     await prisma.call.update({
@@ -102,6 +150,8 @@ export async function POST(req: NextRequest) {
     const from = (form.get("From") as string || "").replace("whatsapp:", "");
     const body = (form.get("Body") as string) ?? "";
     const msgSid = form.get("MessageSid") as string || `WA_temp_${Date.now()}`;
+    const mediaUrl = form.get("MediaUrl0") as string || null;
+    const mediaType = form.get("MediaContentType0") as string || null;
 
     if (!from) {
       return new NextResponse("Missing From parameter", { status: 400 });
@@ -110,7 +160,7 @@ export async function POST(req: NextRequest) {
     console.log(`Received WhatsApp message from ${from}. Processing in background...`);
 
     // Process in the background to prevent Twilio request timeouts
-    processMessage(from, body, msgSid)
+    processMessage(from, body, msgSid, mediaUrl, mediaType)
       .catch(err => console.error("Background message process failed:", err));
 
     return new NextResponse("OK");
