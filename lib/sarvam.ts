@@ -92,10 +92,11 @@ Be simple, clear, and practical. Keep answers under 3 sentences.`;
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "sarvam-m",
+      model: "sarvam-30b",
       messages,
-      max_tokens: 500,
+      max_tokens: 4000,
       temperature: 0.7,
+      reasoning_effort: "low",
     }),
   });
 
@@ -106,6 +107,9 @@ Be simple, clear, and practical. Keep answers under 3 sentences.`;
   }
 
   const data = await response.json();
+  // Log full raw response to help debug model output format issues
+  console.log("Sarvam LLM raw response:", JSON.stringify(data).substring(0, 500));
+
   const fallbacks: Record<string, string> = {
     "hi-IN": "मुझे खेद है, मैं समझ नहीं पाया।",
     "en-IN": "Sorry, I could not understand. Please try again.",
@@ -115,13 +119,31 @@ Be simple, clear, and practical. Keep answers under 3 sentences.`;
     "kn-IN": "ಕ್ಷಮಿಸಿ, ನನಗೆ ಅರ್ಥವಾಗಲಿಲ್ಲ.",
     "ml-IN": "ക്ഷമിക്കണം, എനിക്ക് മനസ്സിലായില്ല.",
     "mr-IN": "माफ करा, मला समजले नाही.",
-    "gu-IN": "માફ કરશો, મને સમજાયું નહીં.",
+    "gu-IN": "માફ કરشো, મને સમجاयું નहीं.",
     "pa-IN": "ਮਾਫ਼ ਕਰਨਾ, ਮੈਨੂੰ ਸਮਝ ਨਹੀਂ ਆਇਆ।",
     "or-IN": "କ୍ଷମା କରନ୍ତୁ, ମୁଁ ବୁଝିପାରିଲି ନାହିଁ।",
   };
-  let reply = data.choices?.[0]?.message?.content || fallbacks[language] || fallbacks["en-IN"];
-  // Strip <think>...</think> reasoning blocks from the response (handles unclosed tags too)
-  reply = reply.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, "").trim();
+
+  let rawContent = data.choices?.[0]?.message?.content ?? "";
+  // sarvam-30b is a thinking model: final answer is in `content`,
+  // but if max_tokens was exhausted during reasoning, content is null.
+  // Fall back to reasoning_content as a safety net.
+  if (!rawContent) {
+    rawContent = data.choices?.[0]?.message?.reasoning_content ?? "";
+    if (rawContent) console.warn("content was null, falling back to reasoning_content");
+  }
+  console.log("Raw content before strip:", rawContent.substring(0, 200));
+
+  // Strip <think>...</think> reasoning blocks (sarvam-30b may emit these)
+  let reply = rawContent.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, "").trim();
+  console.log("Reply after strip:", reply.substring(0, 200));
+
+  // If reply is empty after stripping (e.g. model only returned a think block), use fallback
+  if (!reply) {
+    reply = fallbacks[language] || fallbacks["en-IN"];
+    console.warn("Reply was empty after stripping think tags, using fallback");
+  }
+
   return reply;
 }
 
@@ -183,7 +205,8 @@ export async function generateCallSummary(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "sarvam-m",
+      model: "sarvam-30b",
+      reasoning_effort: "low",
       messages: [
         {
           role: "system",
@@ -299,7 +322,8 @@ export async function scoreLead(transcript: string): Promise<"Hot" | "Warm" | "C
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "sarvam-m",
+        model: "sarvam-30b",
+        reasoning_effort: "low",
         messages: [
           {
             role: "system",

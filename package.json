@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "npx tsx prisma/seed.ts",
+    "tavus:init": "npx tsx scripts/create-tavus-persona.ts",
     "db:clear": "node -e \"const db = require('better-sqlite3')('./dev.db'); db.prepare('DELETE FROM Message').run(); db.prepare('DELETE FROM Call').run(); console.log('DB cleared');\""
   },
   "prisma": {

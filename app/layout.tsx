@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Lexend } from "next/font/google";
 import "./globals.css";
 
-const geist = Geist({ subsets: ["latin"] });
+const lexend = Lexend({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-lexend",
+});
 
 export const metadata: Metadata = {
-  title: "Kisan Helpline — AI Farmer Support",
+  title: "Akrush — AI Farmer Support",
   description: "AI-powered farmer helpline supporting 11 Indian languages",
 };
 
@@ -15,8 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${geist.className} antialiased`}>{children}</body>
+    <html lang="en" className={`${lexend.variable}`}>
+      <body className={`${lexend.className} antialiased bg-[#fbf9f4] text-[#1b1c19]`}>
+        {children}
+      </body>
     </html>
   );
 }

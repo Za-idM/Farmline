@@ -145,21 +145,21 @@ export default function VoiceDemo() {
   };
 
   const micColors: Record<Status, string> = {
-    idle: "bg-green-600 hover:bg-green-700",
-    recording: "bg-red-500 hover:bg-red-600 animate-pulse",
-    processing: "bg-yellow-500 cursor-not-allowed",
-    speaking: "bg-blue-500 cursor-not-allowed",
-    error: "bg-green-600 hover:bg-green-700",
+    idle: "bg-primary hover:bg-primary-hover",
+    recording: "bg-[#ba1a1a] hover:bg-[#93000a] animate-pulse",
+    processing: "bg-secondary cursor-not-allowed",
+    speaking: "bg-primary-container text-on-primary-container cursor-not-allowed",
+    error: "bg-primary hover:bg-primary-hover",
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-2xl mx-auto">
+    <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,52,33,0.04)] border border-[#eae8e3] overflow-hidden max-w-2xl mx-auto">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 to-green-500 px-6 py-5">
+      <div className="bg-gradient-to-r from-primary to-primary-container px-6 py-5">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-white font-bold text-lg">🌾 Kisan AI — Live Demo</h3>
-            <p className="text-green-100 text-sm mt-0.5">Ask any farming question</p>
+            <p className="text-on-primary-container text-sm mt-0.5">Ask any farming question</p>
           </div>
           <select
             value={language}
@@ -167,7 +167,7 @@ export default function VoiceDemo() {
             className="text-sm bg-white/20 text-white border border-white/30 rounded-lg px-3 py-1.5 focus:outline-none"
           >
             {LANGUAGES.map((l) => (
-              <option key={l.code} value={l.code} className="text-gray-800 bg-white">
+              <option key={l.code} value={l.code} className="text-[#1b1c19] bg-white">
                 {l.label}
               </option>
             ))}
@@ -176,7 +176,7 @@ export default function VoiceDemo() {
       </div>
 
       {/* Chat area */}
-      <div className="h-72 overflow-y-auto p-4 space-y-3 bg-gray-50">
+      <div className="h-72 overflow-y-auto p-4 space-y-3 bg-[#fbf9f4]/50">
         {history.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-gray-400 text-sm gap-2">
             <Volume2 size={32} className="text-gray-300" />
@@ -193,11 +193,11 @@ export default function VoiceDemo() {
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                     msg.role === "farmer"
-                      ? "bg-green-600 text-white rounded-tr-sm"
-                      : "bg-white text-gray-800 rounded-tl-sm shadow-sm border border-gray-100"
+                      ? "bg-primary text-white rounded-tr-none"
+                      : "bg-white text-[#1b1c19] rounded-tl-none shadow-sm border border-[#eae8e3]"
                   }`}
                 >
-                  <p className={`text-xs mb-1 font-medium ${msg.role === "farmer" ? "text-green-200" : "text-gray-400"}`}>
+                  <p className={`text-[10px] mb-1 font-semibold tracking-wider uppercase ${msg.role === "farmer" ? "text-[#89ba9f]" : "text-gray-400"}`}>
                     {msg.role === "farmer" ? "🧑‍🌾 You" : "🤖 Kisan AI"}
                   </p>
                   {msg.content}
@@ -210,10 +210,10 @@ export default function VoiceDemo() {
       </div>
 
       {/* Controls */}
-      <div className="px-6 py-5 border-t border-gray-100 bg-white">
+      <div className="px-6 py-5 border-t border-[#eae8e3] bg-white">
         <div className="flex flex-col items-center gap-3">
           {/* Status */}
-          <p className={`text-sm ${status === "error" ? "text-red-500" : "text-gray-500"}`}>
+          <p className={`text-sm font-medium ${status === "error" ? "text-[#ba1a1a]" : "text-gray-500"}`}>
             {statusLabel[status]}
           </p>
 
@@ -221,7 +221,7 @@ export default function VoiceDemo() {
           <button
             onClick={handleMicClick}
             disabled={status === "processing" || status === "speaking"}
-            className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg ${micColors[status]}`}
+            className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg cursor-pointer ${micColors[status]}`}
           >
             {status === "processing" ? (
               <Loader2 size={28} className="animate-spin" />
@@ -236,7 +236,7 @@ export default function VoiceDemo() {
           {history.length > 0 && status === "idle" && (
             <button
               onClick={clearChat}
-              className="text-xs text-gray-400 hover:text-gray-600 underline"
+              className="text-xs text-gray-400 hover:text-gray-600 underline cursor-pointer"
             >
               Clear conversation
             </button>

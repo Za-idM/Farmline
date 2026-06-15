@@ -35,9 +35,9 @@ interface CallTableProps {
 }
 
 const statusColors: Record<string, string> = {
-  completed: "bg-green-100 text-green-700",
-  "in-progress": "bg-yellow-100 text-yellow-700",
-  failed: "bg-red-100 text-red-700",
+  completed: "bg-[#bbeed1] text-[#002113] border border-[#9fd2b6]/30",
+  "in-progress": "bg-[#ffdf96] text-[#251a00] border border-[#e7c268]/30",
+  failed: "bg-[#ffdad6] text-[#93000a] border border-[#ffdad6]",
 };
 
 const languageLabels: Record<string, string> = {
@@ -91,45 +91,45 @@ export default function CallTable({ calls, onRefresh }: CallTableProps) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100">
-              <th className="text-left py-3 px-4 text-gray-500 font-medium">Farmer Number</th>
-              <th className="text-left py-3 px-4 text-gray-500 font-medium">Channel</th>
-              <th className="text-left py-3 px-4 text-gray-500 font-medium">Language</th>
-              <th className="text-left py-3 px-4 text-gray-500 font-medium">Lead Score</th>
-              <th className="text-left py-3 px-4 text-gray-500 font-medium">Status</th>
-              <th className="text-left py-3 px-4 text-gray-500 font-medium">Duration</th>
-              <th className="text-left py-3 px-4 text-gray-500 font-medium">Time</th>
-              <th className="text-left py-3 px-4 text-gray-500 font-medium">Summary</th>
-              <th className="text-left py-3 px-4 text-gray-500 font-medium">Actions</th>
+            <tr className="border-b border-[#eae8e3] bg-[#f5f3ee]/50">
+              <th className="text-left py-3.5 px-4 text-[#414943] font-semibold">Farmer Number</th>
+              <th className="text-left py-3.5 px-4 text-[#414943] font-semibold">Channel</th>
+              <th className="text-left py-3.5 px-4 text-[#414943] font-semibold">Language</th>
+              <th className="text-left py-3.5 px-4 text-[#414943] font-semibold">Lead Score</th>
+              <th className="text-left py-3.5 px-4 text-[#414943] font-semibold">Status</th>
+              <th className="text-left py-3.5 px-4 text-[#414943] font-semibold">Duration</th>
+              <th className="text-left py-3.5 px-4 text-[#414943] font-semibold">Time</th>
+              <th className="text-left py-3.5 px-4 text-[#414943] font-semibold">Summary</th>
+              <th className="text-left py-3.5 px-4 text-[#414943] font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
             {calls.map((call) => (
               <tr
                 key={call.id}
-                className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
+                className="border-b border-[#f0eee9] hover:bg-[#fbf9f4] transition-colors"
               >
-                <td className="py-3 px-4 font-mono text-gray-700">{call.fromNumber}</td>
-                <td className="py-3 px-4">
+                <td className="py-4 px-4 font-mono text-[#1b1c19] font-medium">{call.fromNumber}</td>
+                <td className="py-4 px-4">
                   <span className={`px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 ${
                     call.channel === "whatsapp"
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                      : "bg-blue-50 text-blue-700 border border-blue-100"
+                      ? "bg-[#bbeed1] text-[#003421] border border-[#9fd2b6]/30"
+                      : "bg-[#eae8e3] text-[#1b1c19] border border-[#dbdad5]/40"
                   }`}>
                     {call.channel === "whatsapp" ? "💬 WhatsApp" : "📞 Voice Call"}
                   </span>
                 </td>
-                <td className="py-3 px-4 text-gray-600">
+                <td className="py-4 px-4 text-[#414943] font-medium">
                   {languageLabels[call.language] || call.language}
                 </td>
-                <td className="py-3 px-4">
+                <td className="py-4 px-4">
                   {call.leadScore ? (
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
                       call.leadScore === "Hot"
-                        ? "bg-rose-50 text-rose-700 border border-rose-100"
+                        ? "bg-[#ffdad6] text-[#93000a] border-[#ffdad6]"
                         : call.leadScore === "Warm"
-                        ? "bg-amber-50 text-amber-700 border border-amber-100"
-                        : "bg-slate-50 text-slate-600 border border-slate-100"
+                        ? "bg-[#ffdf96] text-[#795d08] border-[#ffdf96]"
+                        : "bg-[#eae8e3] text-[#414943] border-[#eae8e3]"
                     }`}>
                       {call.leadScore}
                     </span>
@@ -137,35 +137,35 @@ export default function CallTable({ calls, onRefresh }: CallTableProps) {
                     <span className="text-gray-300">—</span>
                   )}
                 </td>
-                <td className="py-3 px-4">
+                <td className="py-4 px-4">
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      statusColors[call.status] || "bg-gray-100 text-gray-600"
+                    className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      statusColors[call.status] || "bg-[#eae8e3] text-[#414943]"
                     }`}
                   >
                     {call.status}
                   </span>
                 </td>
-                <td className="py-3 px-4 text-gray-600">{formatDuration(call.duration)}</td>
-                <td className="py-3 px-4 text-gray-500">
+                <td className="py-4 px-4 text-[#414943]">{formatDuration(call.duration)}</td>
+                <td className="py-4 px-4 text-[#414943] text-xs">
                   {formatDistanceToNow(new Date(call.startedAt), { addSuffix: true })}
                 </td>
-                <td className="py-3 px-4 text-gray-500 max-w-xs truncate">
+                <td className="py-4 px-4 text-[#414943] max-w-xs truncate text-xs">
                   {call.summary || (
                     <span className="text-gray-300 italic">No summary yet</span>
                   )}
                 </td>
-                <td className="py-3 px-4">
+                <td className="py-4 px-4">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setSelectedCall(call)}
-                      className="text-green-600 hover:text-green-800 font-medium text-xs"
+                      className="text-primary font-semibold hover:text-primary-hover text-xs underline cursor-pointer"
                     >
                       View
                     </button>
                     <button
                       onClick={() => setEditingCall(call)}
-                      className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                      className="p-1.5 text-gray-400 hover:text-primary hover:bg-[#f0eee9] rounded-lg transition-colors cursor-pointer"
                       title="Edit"
                     >
                       <Pencil size={14} />
@@ -173,7 +173,7 @@ export default function CallTable({ calls, onRefresh }: CallTableProps) {
                     <button
                       onClick={() => handleDelete(call.id)}
                       disabled={deletingId === call.id}
-                      className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-40"
+                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-[#ffdad6]/40 rounded-lg transition-colors disabled:opacity-40 cursor-pointer"
                       title="Delete"
                     >
                       <Trash2 size={14} />
