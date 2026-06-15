@@ -185,11 +185,3 @@ npm run db:clear     # Wipe all call records
 | en-IN | English (Indian) |
 
 ---
-
-## Hackathon Demo Tips
-
-- Verify all judge phone numbers in Twilio before the demo
-- Seed demo data with `npm run seed` to show a populated dashboard
-- The LLM is free — no risk of running out of credits mid-demo
-- Keep calls under 2 minutes to conserve the 75 free voice minutes
-- Deploy to Vercel the night before — don't rely on ngrok during a live demo
